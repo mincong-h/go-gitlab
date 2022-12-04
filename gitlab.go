@@ -72,6 +72,9 @@ type Client struct {
 	// Base URL for API requests. Defaults to the public GitLab API, but can be
 	// set to a domain endpoint to use with a self hosted GitLab server. baseURL
 	// should always be specified with a trailing slash.
+	//
+	// Making the baseURL configurable so that the SDK can switch to different
+	// environments easily.
 	baseURL *url.URL
 
 	// disableRetries is used to disable the default retry logic.
@@ -100,6 +103,7 @@ type Client struct {
 	UserAgent string
 
 	// Services used for talking to different parts of the GitLab API.
+	// We register all the services in the client.
 	AccessRequests          *AccessRequestsService
 	Applications            *ApplicationsService
 	AuditEvents             *AuditEventsService
@@ -147,7 +151,7 @@ type Client struct {
 	IssueLinks              *IssueLinksService
 	Issues                  *IssuesService
 	IssuesStatistics        *IssuesStatisticsService
-	Jobs                    *JobsService
+	Jobs                    *JobsService // here we registers the JobsService as sub-client "Jobs"
 	Keys                    *KeysService
 	Labels                  *LabelsService
 	License                 *LicenseService
