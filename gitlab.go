@@ -151,7 +151,12 @@ type Client struct {
 	IssueLinks              *IssueLinksService
 	Issues                  *IssuesService
 	IssuesStatistics        *IssuesStatisticsService
-	Jobs                    *JobsService // here we registers the JobsService as sub-client "Jobs"
+	// Here we register the JobsService as sub-client "Jobs"
+	// As a user, you can use it directly as:
+	//
+	// 	gitlabClient.Jobs.ListProjectJobs(...)
+	//
+	Jobs                    *JobsService
 	Keys                    *KeysService
 	Labels                  *LabelsService
 	License                 *LicenseService
