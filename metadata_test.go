@@ -51,4 +51,3 @@ func TestGetMetadata(t *testing.T) {
 		t.Errorf("Metadata.GetMetadata returned %+v, want %+v", version, want)
 	}
 }
-

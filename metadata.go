@@ -60,4 +60,3 @@ func (s *MetadataService) GetMetadata(options ...RequestOptionFunc) (*Metadata, 
 
 	return v, resp, err
 }
-

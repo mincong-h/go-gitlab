@@ -333,7 +333,7 @@ func (s *PipelinesService) RetryPipelineBuild(pid interface{}, pipeline int, opt
 // CancelPipelineBuild cancels a pipeline builds
 //
 // GitLab API docs:
-//https://docs.gitlab.com/ce/api/pipelines.html#cancel-a-pipelines-builds
+// https://docs.gitlab.com/ce/api/pipelines.html#cancel-a-pipelines-builds
 func (s *PipelinesService) CancelPipelineBuild(pid interface{}, pipeline int, options ...RequestOptionFunc) (*Pipeline, *Response, error) {
 	project, err := parseID(pid)
 	if err != nil {

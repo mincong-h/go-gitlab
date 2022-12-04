@@ -48,7 +48,7 @@ func (v ProjectVariable) String() string {
 	return Stringify(v)
 }
 
-//VariableFilter filters available for project variable related functions
+// VariableFilter filters available for project variable related functions
 type VariableFilter struct {
 	EnvironmentScope string `url:"environment_scope, omitempty" json:"environment_scope,omitempty"`
 }
