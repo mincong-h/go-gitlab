@@ -27,6 +27,8 @@ import (
 // of the GitLab API.
 //
 // GitLab API docs: https://docs.gitlab.com/ce/api/jobs.html
+//
+// This service is responsible for job-related exchange.
 type JobsService struct {
 	client *Client
 }
