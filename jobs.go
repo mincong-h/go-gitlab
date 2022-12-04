@@ -36,6 +36,11 @@ type JobsService struct {
 // Job represents a ci build.
 //
 // GitLab API docs: https://docs.gitlab.com/ce/api/jobs.html
+//
+// The structure of the HTTP requests and the HTTP responses are directly matched to the definition
+// provided by the server APIs. There isn't any mechanism to synchronize the definition between
+// the server and the client. The JSON marshalling and unmarshalling rely on the annotations present
+// in the structure, as shown below.
 type Job struct {
 	Commit            *Commit    `json:"commit"`
 	Coverage          float64    `json:"coverage"`
