@@ -230,6 +230,9 @@ type RateLimiter interface {
 
 // NewClient returns a new GitLab API client. To use API methods which require
 // authentication, provide a valid private or personal token.
+//
+// Here we can create new client with the required token and a list of optional
+// options
 func NewClient(token string, options ...ClientOptionFunc) (*Client, error) {
 	client, err := newClient(options...)
 	if err != nil {
