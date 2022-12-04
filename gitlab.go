@@ -360,7 +360,7 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.IssueLinks = &IssueLinksService{client: c}
 	c.Issues = &IssuesService{client: c, timeStats: timeStats}
 	c.IssuesStatistics = &IssuesStatisticsService{client: c}
-	c.Jobs = &JobsService{client: c}
+	c.Jobs = &JobsService{client: c} // here we initialize the job sub client, which also contains the underlying client
 	c.Keys = &KeysService{client: c}
 	c.Labels = &LabelsService{client: c}
 	c.License = &LicenseService{client: c}
