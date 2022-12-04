@@ -128,19 +128,30 @@ type ListJobsOptions struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ce/api/jobs.html#list-project-jobs
+//
+// The output of the method contains 3 elements: the domain-specific correct response, the raw HTTP response, and the error
 func (s *JobsService) ListProjectJobs(pid interface{}, opts *ListJobsOptions, options ...RequestOptionFunc) ([]*Job, *Response, error) {
 	project, err := parseID(pid)
 	if err != nil {
 		return nil, nil, err
 	}
+	// When calling an HTTP request, we construct the relative URL
 	u := fmt.Sprintf("projects/%s/jobs", PathEscape(project))
 
+	// The actual request is prepared by the low-level client
+	// so that we can share the same knowledge for all the sub-domains
+	// there are two kinds of options:
+	//   1. the domain-specific options for jobs
+	//   2. the http-specific options for http request
 	req, err := s.client.NewRequest(http.MethodGet, u, opts, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var jobs []*Job
+	// The actual request is handled by the low-level http client
+	// it returns the raw response, the error response, and also
+	// assigns the unmarshalled correct as jobs, which is domain-specific
 	resp, err := s.client.Do(req, &jobs)
 	if err != nil {
 		return nil, resp, err
