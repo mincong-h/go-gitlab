@@ -908,6 +908,8 @@ func (e *ErrorResponse) Error() string {
 }
 
 // CheckResponse checks the API response for errors, and returns them if present.
+// Here is the error handling
+// 2xx -> OK
 func CheckResponse(r *http.Response) error {
 	switch r.StatusCode {
 	case 200, 201, 202, 204, 304:
@@ -930,6 +932,7 @@ func CheckResponse(r *http.Response) error {
 	return errorResponse
 }
 
+// Error format in GitLab:
 // Format:
 //
 //	{
