@@ -35,7 +35,7 @@ import (
 
 	"github.com/google/go-querystring/query"
 	"github.com/hashicorp/go-cleanhttp"
-	retryablehttp "github.com/hashicorp/go-retryablehttp"
+	retryablehttp "github.com/hashicorp/go-retryablehttp" // this is from hashicort, not the builtin http from go
 	"golang.org/x/oauth2"
 	"golang.org/x/time/rate"
 )
@@ -511,6 +511,7 @@ func (c *Client) configureLimiter(ctx context.Context) error {
 	}
 	resp.Body.Close()
 
+	// awareness to the rate limiting
 	if v := resp.Header.Get(headerRateLimit); v != "" {
 		if rateLimit, _ := strconv.ParseFloat(v, 64); rateLimit > 0 {
 			// The rate limit is based on requests per minute, so for our limiter to
@@ -795,6 +796,7 @@ func (c *Client) Do(req *retryablehttp.Request, v interface{}) (*Response, error
 				return nil, err
 			}
 		}
+		// authz
 		req.Header.Set("Authorization", "Bearer "+basicAuthToken)
 	case JobToken:
 		if values := req.Header.Values("JOB-TOKEN"); len(values) == 0 {
