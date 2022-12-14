@@ -35,6 +35,7 @@ jobs:
           version: latest
 
       - name: Test package
+        # comment to run the tests
         run: |
           go test -v ./... -coverprofile=coverage.txt -covermode count
           go tool cover -func coverage.txt

@@ -71,7 +71,7 @@ type ListReleasesOptions struct {
 	ListOptions
 	OrderBy                *string `url:"order_by,omitempty" json:"order_by,omitempty"`
 	Sort                   *string `url:"sort,omitempty" json:"sort,omitempty"`
-	IncludeHTMLDescription *bool   `url:"include_html_description,omitempty" json:"include_html_description,omitempty"`	
+	IncludeHTMLDescription *bool   `url:"include_html_description,omitempty" json:"include_html_description,omitempty"`
 }
 
 // ListReleases gets a pagenated of releases accessible by the authenticated user.

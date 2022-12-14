@@ -27,6 +27,7 @@ import (
 type ClientOptionFunc func(*Client) error
 
 // WithBaseURL sets the base URL for API requests to a custom endpoint.
+// ^ note
 func WithBaseURL(urlStr string) ClientOptionFunc {
 	return func(c *Client) error {
 		return c.setBaseURL(urlStr)
@@ -103,6 +104,7 @@ func WithHTTPClient(httpClient *http.Client) ClientOptionFunc {
 }
 
 // WithRequestLogHook can be used to configure a custom request log hook.
+// ^ look hook
 func WithRequestLogHook(hook retryablehttp.RequestLogHook) ClientOptionFunc {
 	return func(c *Client) error {
 		c.client.RequestLogHook = hook

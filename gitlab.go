@@ -35,7 +35,7 @@ import (
 
 	"github.com/google/go-querystring/query"
 	"github.com/hashicorp/go-cleanhttp"
-	retryablehttp "github.com/hashicorp/go-retryablehttp"
+	retryablehttp "github.com/hashicorp/go-retryablehttp" // this is from hashicort, not the builtin http from go
 	"golang.org/x/oauth2"
 	"golang.org/x/time/rate"
 )
@@ -72,6 +72,9 @@ type Client struct {
 	// Base URL for API requests. Defaults to the public GitLab API, but can be
 	// set to a domain endpoint to use with a self hosted GitLab server. baseURL
 	// should always be specified with a trailing slash.
+	//
+	// Making the baseURL configurable so that the SDK can switch to different
+	// environments easily.
 	baseURL *url.URL
 
 	// disableRetries is used to disable the default retry logic.
@@ -100,6 +103,7 @@ type Client struct {
 	UserAgent string
 
 	// Services used for talking to different parts of the GitLab API.
+	// We register all the services in the client.
 	AccessRequests          *AccessRequestsService
 	Applications            *ApplicationsService
 	AuditEvents             *AuditEventsService
@@ -147,6 +151,11 @@ type Client struct {
 	IssueLinks              *IssueLinksService
 	Issues                  *IssuesService
 	IssuesStatistics        *IssuesStatisticsService
+	// Here we register the JobsService as sub-client "Jobs"
+	// As a user, you can use it directly as:
+	//
+	// 	gitlabClient.Jobs.ListProjectJobs(...)
+	//
 	Jobs                    *JobsService
 	Keys                    *KeysService
 	Labels                  *LabelsService
@@ -226,6 +235,9 @@ type RateLimiter interface {
 
 // NewClient returns a new GitLab API client. To use API methods which require
 // authentication, provide a valid private or personal token.
+//
+// Here we can create new client with the required token and a list of optional
+// options
 func NewClient(token string, options ...ClientOptionFunc) (*Client, error) {
 	client, err := newClient(options...)
 	if err != nil {
@@ -353,7 +365,7 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.IssueLinks = &IssueLinksService{client: c}
 	c.Issues = &IssuesService{client: c, timeStats: timeStats}
 	c.IssuesStatistics = &IssuesStatisticsService{client: c}
-	c.Jobs = &JobsService{client: c}
+	c.Jobs = &JobsService{client: c} // here we initialize the job sub client, which also contains the underlying client
 	c.Keys = &KeysService{client: c}
 	c.Labels = &LabelsService{client: c}
 	c.License = &LicenseService{client: c}
@@ -499,6 +511,7 @@ func (c *Client) configureLimiter(ctx context.Context) error {
 	}
 	resp.Body.Close()
 
+	// awareness to the rate limiting
 	if v := resp.Header.Get(headerRateLimit); v != "" {
 		if rateLimit, _ := strconv.ParseFloat(v, 64); rateLimit > 0 {
 			// The rate limit is based on requests per minute, so for our limiter to
@@ -562,16 +575,21 @@ func (c *Client) NewRequest(method, path string, opt interface{}, options []Requ
 	u.Path = c.baseURL.Path + unescaped
 
 	// Create a request specific headers map.
+	//
+	// All specific HTTP headers are handled here which allow user to have better control
+	// about the metadata used.
 	reqHeaders := make(http.Header)
 	reqHeaders.Set("Accept", "application/json")
 
 	if c.UserAgent != "" {
+		// Override User-Agent
 		reqHeaders.Set("User-Agent", c.UserAgent)
 	}
 
 	var body interface{}
 	switch {
 	case method == http.MethodPost || method == http.MethodPut:
+		// POST and PUT are done using application/json
 		reqHeaders.Set("Content-Type", "application/json")
 
 		if opt != nil {
@@ -689,6 +707,8 @@ func (c *Client) UploadRequest(method, path string, content io.Reader, filename 
 // Response is a GitLab API response. This wraps the standard http.Response
 // returned from GitLab and provides convenient access to things like
 // pagination links.
+//
+// ^ note
 type Response struct {
 	*http.Response
 
@@ -722,6 +742,8 @@ const (
 
 // populatePageValues parses the HTTP Link response headers and populates the
 // various pagination link values in the Response.
+//
+// ^ note
 func (r *Response) populatePageValues() {
 	if totalItems := r.Header.Get(xTotal); totalItems != "" {
 		r.TotalItems, _ = strconv.Atoi(totalItems)
@@ -774,6 +796,7 @@ func (c *Client) Do(req *retryablehttp.Request, v interface{}) (*Response, error
 				return nil, err
 			}
 		}
+		// authz
 		req.Header.Set("Authorization", "Bearer "+basicAuthToken)
 	case JobToken:
 		if values := req.Header.Values("JOB-TOKEN"); len(values) == 0 {
@@ -885,6 +908,8 @@ func (e *ErrorResponse) Error() string {
 }
 
 // CheckResponse checks the API response for errors, and returns them if present.
+// Here is the error handling
+// 2xx -> OK
 func CheckResponse(r *http.Response) error {
 	switch r.StatusCode {
 	case 200, 201, 202, 204, 304:
@@ -907,6 +932,7 @@ func CheckResponse(r *http.Response) error {
 	return errorResponse
 }
 
+// Error format in GitLab:
 // Format:
 //
 //	{

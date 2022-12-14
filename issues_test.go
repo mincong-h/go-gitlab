@@ -378,7 +378,7 @@ func TestListIssuesSearchByIterationID(t *testing.T) {
 	if !reflect.DeepEqual(want, issues) {
 		t.Errorf("Issues.ListIssues returned %+v, want %+v", issues, want)
 	}
- }
+}
 
 func TestListProjectIssues(t *testing.T) {
 	mux, server, client := setup(t)
@@ -441,7 +441,7 @@ func TestListProjectIssuesSearchByIterationID(t *testing.T) {
 		IterationID: Int(90),
 	}
 
-	issues, _, err := client.Issues.ListProjectIssues(1 ,listProjectIssue)
+	issues, _, err := client.Issues.ListProjectIssues(1, listProjectIssue)
 
 	if err != nil {
 		log.Fatal(err)
@@ -464,7 +464,7 @@ func TestListProjectIssuesSearchByIterationID(t *testing.T) {
 	if !reflect.DeepEqual(want, issues) {
 		t.Errorf("Issues.ListIssues returned %+v, want %+v", issues, want)
 	}
- }
+}
 
 func TestListGroupIssues(t *testing.T) {
 	mux, server, client := setup(t)
@@ -552,7 +552,7 @@ func TestListGroupIssuesSearchByIterationID(t *testing.T) {
 	if !reflect.DeepEqual(want, issues) {
 		t.Errorf("Issues.ListIssues returned %+v, want %+v", issues, want)
 	}
- }
+}
 
 func TestCreateIssue(t *testing.T) {
 	mux, server, client := setup(t)

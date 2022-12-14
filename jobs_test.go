@@ -26,7 +26,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Test
 func TestListPipelineJobs(t *testing.T) {
+	// Setup test suite with server (httptest.Server) and GitLab client
+	// ServeMux is an HTTP request multiplexer.
 	mux, server, client := setup(t)
 	defer teardown(server)
 
